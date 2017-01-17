@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>实时聊天</title>
+		<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+		<link rel="stylesheet" href="websocket.css" />
+	</head>
+	<script>
+	var name = prompt('请输入您的名字');
+
+	function C(selector){
+		return document.querySelector(selector);
+	}
+	
+	if(window.WebSocket){
+		var url = 'ws://localhost:3000';
+		var ws = new WebSocket(url);
+		ws.onopen = function(e){
+			C('#title').innerText = '连接成功';
+		}
+		ws.onerror = function(){
+			C('#title').innerText = '连接失败';
+		}
+		ws.onmessage = function(e){
+			var li = document.createElement('li');
+			li.innerText = e.data;
+			C('#list').appendChild(li)
+		}
+		ws.onclose = function(){
+			C('#title').innerText = '连接关闭';
+		}
+		
+		function sendMsg(){
+			ws.send(name +'：  '+ document.querySelector('#msg').value);
+		}
+		
+	}else{
+		C('#title').innerText = '浏览器不支持';
+	}
+	</script>
+	<body>
+		<div class="container">
+			<div class="alert alert-success" role="alert" id="title"></div>
+			<ul id="list">
+				
+			</ul>
+			<div>
+				<textarea class="form-control" id="msg" rows="3"></textarea>
+				<div class="content">
+				<button onclick="sendMsg()" type="button" class="btn btn-primary btn-block">发送</button>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
