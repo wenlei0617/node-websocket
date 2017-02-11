@@ -26,6 +26,7 @@
 		ws.onmessage = function(e){
 			var li = document.createElement('li');
 			li.innerText = e.data;
+			
 			C('#list').appendChild(li);
 		
 			if(!'Notification' in window ){
