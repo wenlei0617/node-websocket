@@ -8,7 +8,8 @@
 	</head>
 	<script>
 	var name = prompt('请输入您的名字');
-
+	var message;
+	
 	function C(selector){
 		return document.querySelector(selector);
 	}
@@ -25,16 +26,41 @@
 		ws.onmessage = function(e){
 			var li = document.createElement('li');
 			li.innerText = e.data;
-			C('#list').appendChild(li)
+			C('#list').appendChild(li);
+		
+			if(!'Notification' in window ){
+				alert('不支持通知')
+			}else if(Notification.permission === 'granted'){
+				message == e.data?'':notice(e.data)
+			}else if(Notification.permission !== 'denied'){
+				Notification.requestPermission(function(permission){
+					if(permission === 'granted'){
+						message == e.data?'':notice(e.data)
+					}
+				})
+			}	
+			
+			
 		}
 		ws.onclose = function(){
 			C('#title').innerText = '连接关闭';
 		}
 		
 		function sendMsg(){
+			message = name +'：  '+ document.querySelector('#msg').value;
 			ws.send(name +'：  '+ document.querySelector('#msg').value);
 		}
 		
+		function notice(msg){
+			var notification = new Notification('聊天室消息',{
+				body:msg,
+				icon:'blank_page_03.png'
+			})
+			
+			notification.onclick = function(){
+				notification.close();
+			}
+		}
 	}else{
 		C('#title').innerText = '浏览器不支持';
 	}
